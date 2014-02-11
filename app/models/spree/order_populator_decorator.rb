@@ -8,9 +8,11 @@ module Spree
     #
     # * Multiple products at once
     # +:products => { product_id => variant_id, product_id => variant_id }, :quantity => quantity+
+    # +:products => { product_id => variant_id, product_id => variant_id }, :quantity => { variant_id => quantity }+
     def populate(from_hash)
       from_hash[:products].each do |product_id,variant_id|
-        attempt_cart_add(variant_id, from_hash[:quantity], from_hash[:ad_hoc_option_value_ids], from_hash[:product_customizations])
+        quantity = from_hash[:quantity].is_a?(Hash) ? from_hash[:quantity][variant_id].to_i : from_hash[:quantity].to_i
+        attempt_cart_add(variant_id, quantity, from_hash[:ad_hoc_option_value_ids], from_hash[:product_customizations])
       end if from_hash[:products]
 
       from_hash[:variants].each do |variant_id, quantity|
